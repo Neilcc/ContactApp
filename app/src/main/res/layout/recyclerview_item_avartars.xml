@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/avatar_width"
+        android:layout_height="@dimen/avatar_width"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/middle_padding"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginRight="@dimen/middle_padding"
+        android:layout_marginBottom="@dimen/big_padding"
+        android:background="@drawable/bg_selected_circle"
+        android:scaleType="fitCenter" />
+
+</RelativeLayout>
