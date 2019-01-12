@@ -28,6 +28,7 @@
             tools:text="Celeste" />
 
         <TextView
+            android:id="@+id/tv_last_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/small_padding"
