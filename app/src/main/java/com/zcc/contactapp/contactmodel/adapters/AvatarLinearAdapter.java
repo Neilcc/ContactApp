@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
 import com.zcc.contactapp.R;
 import com.zcc.contactapp.base.recyclerviewbase.BaseLinearAdapter;
 import com.zcc.contactapp.base.recyclerviewbase.BaseViewHolder;
@@ -32,8 +33,8 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
 
         @Override
         public void onBind(AvatarDataBean data) {
-            mAvatarImageView.setImageURI(null);
             mAvatarImageView.setSelected(true);
+            Picasso.get().load(data.getAvatarUri()).into(mAvatarImageView);
         }
 
     }

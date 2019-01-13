@@ -21,6 +21,7 @@ public class DetailLinearAdapter extends BaseLinearAdapter<DetailDataBean, Detai
         return new DetailViewHolder(root);
     }
 
+
     public static class DetailViewHolder extends BaseViewHolder<DetailDataBean> {
 
         private TextView mFirstName;
@@ -38,6 +39,10 @@ public class DetailLinearAdapter extends BaseLinearAdapter<DetailDataBean, Detai
 
         @Override
         public void onBind(DetailDataBean data) {
+            mFirstName.setText(data.getFirstName());
+            mLastName.setText(data.getLastName());
+            mTitle.setText(data.getTitle());
+            mDetail.setText(data.getDetail());
         }
     }
 }

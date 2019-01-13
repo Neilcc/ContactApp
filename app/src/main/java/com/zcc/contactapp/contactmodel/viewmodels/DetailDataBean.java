@@ -8,6 +8,16 @@ public class DetailDataBean {
     private String mTitle;
     private String mDetail;
 
+    public DetailDataBean() {
+    }
+
+    public DetailDataBean(String mFirstName, String mLastName, String mTitle, String mDetail) {
+        this.mFirstName = mFirstName;
+        this.mLastName = mLastName;
+        this.mTitle = mTitle;
+        this.mDetail = mDetail;
+    }
+
     public void setDetail(String mDetail) {
         this.mDetail = mDetail;
     }
@@ -25,7 +35,7 @@ public class DetailDataBean {
     }
 
     public String getDetail() {
-        return TextUtils.isEmpty(mDetail) ? "" : mFirstName;
+        return TextUtils.isEmpty(mDetail) ? "" : mDetail;
     }
 
     public String getFirstName() {

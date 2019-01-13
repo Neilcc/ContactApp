@@ -19,4 +19,9 @@ public abstract class BaseLinearAdapter<T, VH extends BaseViewHolder<T>> extends
         return mDataList == null ? 0 : mDataList.size();
     }
 
+    public void setDataList(List<T> dataList) {
+        mDataList = dataList;
+        notifyDataSetChanged();
+    }
+
 }

@@ -1,12 +1,18 @@
 package com.zcc.contactapp.contactmodel.viewmodels;
 
-import java.net.URI;
 
 public class AvatarDataBean {
-    private URI mAvatarUri;
+    private String mAvatarUri;
     private boolean isSelected;
 
-    public void setAvatarUri(URI mAvatarUri) {
+    public AvatarDataBean() {
+    }
+
+    public AvatarDataBean(String mAvatarUri) {
+        this.mAvatarUri = mAvatarUri;
+    }
+
+    public void setAvatarUri(String mAvatarUri) {
         this.mAvatarUri = mAvatarUri;
     }
 
@@ -14,7 +20,7 @@ public class AvatarDataBean {
         isSelected = selected;
     }
 
-    public URI getAvatarUri() {
+    public String getAvatarUri() {
         return mAvatarUri;
     }
 
