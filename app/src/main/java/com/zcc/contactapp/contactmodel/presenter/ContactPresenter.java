@@ -1,5 +1,6 @@
 package com.zcc.contactapp.contactmodel.presenter;
 
+import com.zcc.contactapp.base.repository.ILoadDataListener;
 import com.zcc.contactapp.contactmodel.repository.ContactDataBean;
 import com.zcc.contactapp.contactmodel.repository.ContactDataRepository;
 import com.zcc.contactapp.contactmodel.viewmodels.AvatarDataBean;
@@ -20,28 +21,33 @@ public class ContactPresenter {
     }
 
     public void loadContactData() {
-        List<ContactDataBean> contactDataBeans = mDataRepository.getData();
-        List<AvatarDataBean> avatarDataBeans = new ArrayList<>();
-        List<DetailDataBean> detailDataBeans = new ArrayList<>();
-        for (ContactDataBean contactDataBean : contactDataBeans) {
-            avatarDataBeans.add(new AvatarDataBean(UrlUtil
-                    .generateAssetUrl(contactDataBean.getAvatar_filename(),
-                            ContactDataRepository.IMAGE_FOLDER)));
-            detailDataBeans.add(new DetailDataBean(contactDataBean.getFirst_name(),
-                    contactDataBean.getLast_name(),
-                    contactDataBean.getTitle(),
-                    contactDataBean.getIntroduction()));
-        }
-        if (avatarDataBeans.size() > 0) {
-            avatarDataBeans.get(0).setSelected(true);
-        }
-        mContactContractView.updateContactAvatar(avatarDataBeans);
-        mContactContractView.updateContactDetail(detailDataBeans);
-    }
+        mDataRepository.loadDataAsync(new ILoadDataListener<List<ContactDataBean>>() {
+            @Override
+            public void onSuccess(List<ContactDataBean> contactDataBeans) {
+                List<AvatarDataBean> avatarDataBeans = new ArrayList<>();
+                List<DetailDataBean> detailDataBeans = new ArrayList<>();
+                for (ContactDataBean contactDataBean : contactDataBeans) {
+                    avatarDataBeans.add(new AvatarDataBean(UrlUtil
+                            .generateAssetUrl(contactDataBean.getAvatar_filename(),
+                                    ContactDataRepository.IMAGE_FOLDER)));
+                    detailDataBeans.add(new DetailDataBean(contactDataBean.getFirst_name(),
+                            contactDataBean.getLast_name(),
+                            contactDataBean.getTitle(),
+                            contactDataBean.getIntroduction()));
+                }
+                if (avatarDataBeans.size() > 0) {
+                    avatarDataBeans.get(0).setSelected(true);
+                }
+                mContactContractView.updateContactAvatar(avatarDataBeans);
+                mContactContractView.updateContactDetail(detailDataBeans);
+            }
 
-    public void loadContactDataAsync() {
-        //todo
-    }
+            @Override
+            public void onFailed(int code, String msg) {
 
+            }
+        });
+
+    }
 
 }

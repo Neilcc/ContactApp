@@ -1,6 +1,9 @@
 package com.zcc.contactapp.contactmodel.repository;
 
+import android.os.AsyncTask;
+
 import com.google.gson.reflect.TypeToken;
+import com.zcc.contactapp.base.repository.ILoadDataListener;
 import com.zcc.contactapp.utils.AssetUtil;
 import com.zcc.contactapp.utils.GsonUtil;
 
@@ -18,7 +21,7 @@ public class ContactDataRepository {
     private static final Type CONTACT_DATA_LIST_TYPE = new TypeToken<ArrayList<ContactDataBean>>() {
     }.getType();
 
-    public List<ContactDataBean> getData() {
+    private static List<ContactDataBean> getData() {
         String contactInfo = loadContactData(CONTACT_FILE);
         if (contactInfo.isEmpty()) {
             return new ArrayList<>();
@@ -27,7 +30,7 @@ public class ContactDataRepository {
         }
     }
 
-    private String loadContactData(String assetFileName) {
+    private static String loadContactData(String assetFileName) {
         try {
             InputStreamReader inputStreamReader
                     = new InputStreamReader(AssetUtil.loadAsset(assetFileName));
@@ -41,5 +44,28 @@ public class ContactDataRepository {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public void loadDataAsync(final ILoadDataListener<List<ContactDataBean>> listener) {
+        AsyncTask<Void, Void, List<ContactDataBean>> loadDataTask = new LoadContactDataAsyncTask(listener);
+        loadDataTask.execute();
+    }
+
+    private static class LoadContactDataAsyncTask extends AsyncTask<Void, Void, List<ContactDataBean>> {
+        private ILoadDataListener<List<ContactDataBean>> listener;
+
+        public LoadContactDataAsyncTask(ILoadDataListener<List<ContactDataBean>> listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected List<ContactDataBean> doInBackground(Void... voids) {
+            return getData();
+        }
+
+        @Override
+        protected void onPostExecute(List<ContactDataBean> contactDataBeans) {
+            listener.onSuccess(contactDataBeans);
+        }
     }
 }

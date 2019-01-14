@@ -11,4 +11,6 @@ public interface IContactContractView {
 
     public void updateContactAvatar(List<AvatarDataBean> avatarDataBeans);
 
+    public void onError(int code, String msg);
+
 }

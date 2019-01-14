@@ -17,7 +17,6 @@ import com.zcc.contactapp.utils.ScreenUtil;
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
-import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
 class ContactRecyclerViewUtil {
     private static final String TAG = ContactRecyclerViewUtil.class.getSimpleName();
@@ -82,7 +81,6 @@ class ContactRecyclerViewUtil {
                 return true;
             }
         });
-
         mDetailFlingSnapHelper = new FlingSnapHelper(FLING_MS_PER_INCH
                 * getAvatarItemWidthPx() / getDetailLayoutHeightPx());
         mDetailFlingSnapHelper.attachToRecyclerView(mDetailRecyclerView);
@@ -191,6 +189,7 @@ class ContactRecyclerViewUtil {
     }
 
     private class ContactAvatarRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+
         private float delta = 0.0f;
 
         @Override
@@ -212,8 +211,6 @@ class ContactRecyclerViewUtil {
                 }
             } else if (newState == SCROLL_STATE_DRAGGING) {
                 mAvatarScrollTriggerFlag = true;
-            } else if (newState == SCROLL_STATE_SETTLING) {
-
             }
             DebugLog.e(TAG, "avatar state: " + newState);
         }
@@ -261,7 +258,6 @@ class ContactRecyclerViewUtil {
                 }
             } else if (newState == SCROLL_STATE_DRAGGING) {
                 mDetailScrollTriggerFlag = true;
-            } else if (newState == SCROLL_STATE_SETTLING) {
             }
             DebugLog.e(TAG, "detail state: " + newState);
         }

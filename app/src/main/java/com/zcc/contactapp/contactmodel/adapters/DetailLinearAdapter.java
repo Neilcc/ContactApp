@@ -12,7 +12,6 @@ import com.zcc.contactapp.base.recyclerviewbase.BaseViewHolder;
 import com.zcc.contactapp.contactmodel.viewmodels.DetailDataBean;
 
 public class DetailLinearAdapter extends BaseLinearAdapter<DetailDataBean, DetailLinearAdapter.DetailViewHolder> {
-
     @NonNull
     @Override
     public DetailViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -23,7 +22,6 @@ public class DetailLinearAdapter extends BaseLinearAdapter<DetailDataBean, Detai
 
 
     public static class DetailViewHolder extends BaseViewHolder<DetailDataBean> {
-
         private TextView mFirstName;
         private TextView mLastName;
         private TextView mTitle;
