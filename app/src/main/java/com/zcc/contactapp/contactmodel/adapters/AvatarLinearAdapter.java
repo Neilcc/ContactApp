@@ -44,12 +44,11 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
 
     public void updateSelected(int index) {
         int lastPos = mLastSelectedIndex;
-        int newPos = index;
         mDataList.get(lastPos).setSelected(false);
-        mDataList.get(newPos).setSelected(true);
+        mDataList.get(index).setSelected(true);
         mLastSelectedIndex = index;
         notifyItemChanged(lastPos);
-        notifyItemChanged(newPos);
+        notifyItemChanged(index);
     }
 
     public static class AvatarViewHolder extends BaseViewHolder<AvatarDataBean> {
@@ -66,6 +65,5 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
             mAvatarImageView.setSelected(data.isSelected());
             Picasso.get().load(data.getAvatarUri()).into(mAvatarImageView);
         }
-
     }
 }

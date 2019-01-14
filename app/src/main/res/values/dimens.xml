@@ -11,5 +11,5 @@
     <dimen name="name_font_size">@dimen/action_bar_font_size</dimen>
     <dimen name="title_font_size">15sp</dimen>
     <dimen name="detail_font_size">12sp</dimen>
-    <dimen name="avatar_selected_circle_width">5dp</dimen>
+    <dimen name="avatar_selected_circle_width">3dp</dimen>
 </resources>

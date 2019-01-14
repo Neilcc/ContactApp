@@ -3,9 +3,7 @@ package com.zcc.contactapp.contactmodel;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,56 +11,101 @@ import com.zcc.contactapp.R;
 import com.zcc.contactapp.base.recyclerviewbase.BaseLinearAdapter;
 import com.zcc.contactapp.contactmodel.adapters.AvatarLinearAdapter;
 import com.zcc.contactapp.contactmodel.adapters.DetailLinearAdapter;
+import com.zcc.contactapp.utils.DebugLog;
 import com.zcc.contactapp.utils.ScreenUtil;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_SETTLING;
 
-public class ContactRecyclerViewUtil {
-
+class ContactRecyclerViewUtil {
+    private static final String TAG = ContactRecyclerViewUtil.class.getSimpleName();
+    private static final float FLING_MS_PER_INCH = 100f;
+    private Context mContext;
     private RecyclerView mAvatarRecyclerView;
     private RecyclerView mDetailRecyclerView;
     private AvatarLinearAdapter mAvatarAdapter;
     private DetailLinearAdapter mDetailAdapter;
-    private Context mContext;
-    private float mAvatarRecyclerViewLeftPadding = 0;
-    private float mDetailItemHeight = 0;
-    private float mAvatarItemWidth = 0;
+    private LinearLayoutManager mAvatarLayoutManager;
+    private LinearLayoutManager mDetailLayoutManager;
+    private float mAvatarRecyclerViewLeftPadding = 0.0f;
+    private float mDetailItemHeight = 0.0f;
+    private float mAvatarItemWidth = 0.0f;
+    private float mAvatarDxToDetailDyRatio = 0.0f;
     private boolean mAvatarScrollTriggerFlag = false;
     private boolean mDetailScrollTriggerFlag = false;
-    private boolean mAjustDpFlag = false;
-    private float mAvatarDxToDetailDyRatio = 0.0f;
-    private OrientationHelper mDetailOritentionHelper;
-    private OrientationHelper mAvatarOritentionHelper;
+    private boolean isAdjustingAvatarSnap = false;
+    private boolean isAdjustingDetailSnap = false;
+    private FlingSnapHelper mAvatarFlingSnapHelper;
+    private FlingSnapHelper mDetailFlingSnapHelper;
 
-    public ContactRecyclerViewUtil(RecyclerView mAvatarRecyclerView,
-                                   RecyclerView mDetailRecyclerView) {
+    ContactRecyclerViewUtil(RecyclerView mAvatarRecyclerView,
+                            RecyclerView mDetailRecyclerView) {
         this.mContext = mAvatarRecyclerView.getContext();
         this.mAvatarRecyclerView = mAvatarRecyclerView;
         this.mDetailRecyclerView = mDetailRecyclerView;
     }
 
-    public void init(AvatarLinearAdapter avatarLinearAdapter, DetailLinearAdapter detailLinearAdapter) {
+    void init(AvatarLinearAdapter avatarLinearAdapter, DetailLinearAdapter detailLinearAdapter) {
         mAvatarAdapter = avatarLinearAdapter;
-        mDetailAdapter = detailLinearAdapter;
-        LinearLayoutManager avatarLayoutManager = new LinearLayoutManager(mContext,
+        mAvatarLayoutManager = new LinearLayoutManager(mContext,
                 LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager detailLayoutManager = new LinearLayoutManager(mContext,
-                LinearLayoutManager.VERTICAL, false);
-        mAvatarRecyclerView.setLayoutManager(avatarLayoutManager);
-        mDetailRecyclerView.setLayoutManager(detailLayoutManager);
-
-
+        mAvatarRecyclerView.setLayoutManager(mAvatarLayoutManager);
+        mAvatarRecyclerView.setAdapter(mAvatarAdapter);
         mAvatarRecyclerView.setPadding((int) getAvatarLayoutPaddingPx(), 0,
                 (int) getAvatarLayoutPaddingPx(), 0);
         mAvatarAdapter.setOnItemClickListener(new BaseLinearAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
-                mAvatarRecyclerView.smoothScrollToPosition(pos);
+                smoothScrollTo(pos);
+            }
+        });
+        mDetailAdapter = detailLinearAdapter;
+        mDetailLayoutManager = new LinearLayoutManager(mContext,
+                LinearLayoutManager.VERTICAL, false);
+        mDetailRecyclerView.setLayoutManager(mDetailLayoutManager);
+        mDetailRecyclerView.setAdapter(mDetailAdapter);
+        ViewGroup.LayoutParams lp = mDetailRecyclerView.getLayoutParams();
+        lp.height = (int) getDetailLayoutHeightPx();
+    }
+
+    void bindScroll() {
+        mAvatarRecyclerView.addOnScrollListener(new ContactAvatarRecyclerViewScrollListener());
+        mDetailRecyclerView.addOnScrollListener(new ContactDetailRecyclerViewScrollListener());
+        mAvatarFlingSnapHelper = new FlingSnapHelper(FLING_MS_PER_INCH);
+        mAvatarFlingSnapHelper.attachToRecyclerView(mAvatarRecyclerView);
+        mAvatarFlingSnapHelper.setSnapFlingListener(new FlingSnapHelper.OnSnapFlingListener() {
+            @Override
+            public boolean onSnapFling(int position) {
+                smoothScrollTo(position);
+                return true;
             }
         });
 
-        ViewGroup.LayoutParams lp = mDetailRecyclerView.getLayoutParams();
-        lp.height = (int) getDetailLayoutHeightPx();
+        mDetailFlingSnapHelper = new FlingSnapHelper(FLING_MS_PER_INCH
+                * getAvatarItemWidthPx() / getDetailLayoutHeightPx());
+        mDetailFlingSnapHelper.attachToRecyclerView(mDetailRecyclerView);
+        mDetailFlingSnapHelper.setSnapFlingListener(new FlingSnapHelper.OnSnapFlingListener() {
+            @Override
+            public boolean onSnapFling(int position) {
+                smoothScrollTo(position);
+                return true;
+            }
+        });
+    }
+
+    private void smoothScrollTo(int position) {
+        RecyclerView.SmoothScroller avatarScroller
+                = mAvatarFlingSnapHelper.createScroller(mAvatarLayoutManager);
+        avatarScroller.setTargetPosition(position);
+        RecyclerView.SmoothScroller detailScroller
+                = mDetailFlingSnapHelper.createScroller(mDetailLayoutManager);
+        detailScroller.setTargetPosition(position);
+        isAdjustingDetailSnap = true;
+        isAdjustingAvatarSnap = true;
+        mAvatarLayoutManager.startSmoothScroll(avatarScroller);
+        mDetailLayoutManager.startSmoothScroll(detailScroller);
     }
 
     private float getAvatarLayoutPaddingPx() {
@@ -91,13 +134,6 @@ public class ContactRecyclerViewUtil {
         return mDetailItemHeight;
     }
 
-    public void bindScroll() {
-//        mAvatarOritentionHelper = OrientationHelper.createHorizontalHelper(mAvatarRecyclerView.getLayoutManager());
-        mAvatarRecyclerView.addOnScrollListener(new ContactAvatarRecyclerViewScrollListener());
-//        mDetailOritentionHelper = OrientationHelper.createVerticalHelper(mDetailRecyclerView.getLayoutManager());
-        mDetailRecyclerView.addOnScrollListener(new ContactDetailRecyclerViewScrollListener());
-    }
-
     private float getAvatarDxByDetailDy(int detailDY) {
         if (mAvatarDxToDetailDyRatio == 0.0f) {
             mAvatarDxToDetailDyRatio = getAvatarItemWidthPx() * 1.0f / getDetailLayoutHeightPx();
@@ -112,46 +148,49 @@ public class ContactRecyclerViewUtil {
         return avatarDx / mAvatarDxToDetailDyRatio;
     }
 
-    /**
-     * copied from SnapHelper
-     *
-     * @param layoutManager
-     * @param helper
-     * @return
-     */
-    private View findCenterView(RecyclerView.LayoutManager layoutManager,
-                                OrientationHelper helper) {
-        int childCount = layoutManager.getChildCount();
-        if (childCount == 0) {
-            return null;
+    private int findAvatarScrollTargetPos() {
+        int pos1 = mAvatarLayoutManager.findFirstCompletelyVisibleItemPosition();
+        if (pos1 != NO_POSITION) {
+            return NO_POSITION;
         }
-
-        View closestChild = null;
-        final int center;
-        if (layoutManager.getClipToPadding()) {
-            center = helper.getStartAfterPadding() + helper.getTotalSpace() / 2;
-        } else {
-            center = helper.getEnd() / 2;
-        }
-        int absClosest = Integer.MAX_VALUE;
-
-        for (int i = 0; i < childCount; i++) {
-            final View child = layoutManager.getChildAt(i);
-            int childCenter = helper.getDecoratedStart(child)
-                    + (helper.getDecoratedMeasurement(child) / 2);
-            int absDistance = Math.abs(childCenter - center);
-
-            /** if child center is closer than previous closest, set it as closest  **/
-            if (absDistance < absClosest) {
-                absClosest = absDistance;
-                closestChild = child;
+        pos1 = mAvatarLayoutManager.findFirstVisibleItemPosition();
+        int pos2 = mAvatarLayoutManager.findLastVisibleItemPosition();
+        int retPos = pos1;
+        float distance = Float.MAX_VALUE;
+        for (int i = pos1; i <= pos2; i++) {
+            View child = mAvatarLayoutManager.getChildAt(i);
+            if (child == null) {
+                break;
+            }
+            int childWidth = child.getMeasuredWidth();
+            int childDistance = (int) Math.abs((child.getX() + childWidth / 2)
+                    - (ScreenUtil.getDisplayWidth() / 2));
+            if (childDistance < distance) {
+                distance = childDistance;
+                retPos = i;
             }
         }
-        return closestChild;
+        return retPos;
+    }
+
+    private int findDetailScrollTargetPos() {
+        if (mDetailLayoutManager.findFirstCompletelyVisibleItemPosition() != NO_POSITION) {
+            return NO_POSITION;
+        }
+        int pos1 = mDetailLayoutManager.findFirstVisibleItemPosition();
+        View child = mDetailLayoutManager.findViewByPosition(pos1);
+        if (child == null) {
+            return NO_POSITION;
+        }
+        float childY = child.getY();
+        if (Math.abs(childY) > getDetailLayoutHeightPx() / 2) {
+            return pos1 + 1;
+        } else {
+            return pos1;
+        }
     }
 
     private class ContactAvatarRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
-
         private float delta = 0.0f;
 
         @Override
@@ -159,21 +198,35 @@ public class ContactRecyclerViewUtil {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == SCROLL_STATE_IDLE) {
                 mAvatarScrollTriggerFlag = false;
-                Log.d("zcc", "avatar idle");
+                isAdjustingAvatarSnap = false;
+                int targetPos = findAvatarScrollTargetPos();
+                if (targetPos != NO_POSITION) {
+                    DebugLog.d(TAG, "avatar snap to pos" + targetPos);
+                    isAdjustingDetailSnap = true;
+                    mDetailLayoutManager.smoothScrollToPosition(mDetailRecyclerView, null, targetPos);
+                    isAdjustingAvatarSnap = true;
+                    mAvatarLayoutManager.smoothScrollToPosition(mAvatarRecyclerView, null, targetPos);
+                } else {
+                    int pos = mAvatarLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    mAvatarAdapter.updateSelected(pos);
+                }
+            } else if (newState == SCROLL_STATE_DRAGGING) {
+                mAvatarScrollTriggerFlag = true;
+            } else if (newState == SCROLL_STATE_SETTLING) {
+
             }
+            DebugLog.e(TAG, "avatar state: " + newState);
         }
 
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (!mDetailScrollTriggerFlag && recyclerView.isAttachedToWindow()) {
-                mAvatarScrollTriggerFlag = true;
+            if (!mDetailScrollTriggerFlag && !isAdjustingAvatarSnap && (dx != 0)) {
                 int detailDy = cacDy(dx);
-                mDetailRecyclerView.smoothScrollBy(0, detailDy);
+                mDetailRecyclerView.scrollBy(0, detailDy);
+                DebugLog.d(TAG, "on avatar control");
             }
-            Log.d("zcc", "avatar scroll \t" + dx + "\t"
-                    + dy
-            );
+            DebugLog.d(TAG, "on avatar scroll" + dx + "\t" + dy);
         }
 
         private int cacDy(int dx) {
@@ -188,7 +241,7 @@ public class ContactRecyclerViewUtil {
     private class ContactDetailRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
         private float delta = 0.0f;
 
-        public ContactDetailRecyclerViewScrollListener() {
+        ContactDetailRecyclerViewScrollListener() {
             super();
         }
 
@@ -196,28 +249,32 @@ public class ContactRecyclerViewUtil {
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
             if (newState == SCROLL_STATE_IDLE) {
+                isAdjustingDetailSnap = false;
                 mDetailScrollTriggerFlag = false;
-//                View target = findCenterView(recyclerView.getLayoutManager(), mDetailOritentionHelper);
-//                if (target != null) {
-//                    int pos = recyclerView.getLayoutManager().getPosition(target);
-//                    recyclerView.smoothScrollToPosition(pos);
-//                    mAvatarRecyclerView.smoothScrollToPosition(pos);
-//                }
-                Log.d("zcc", "detail idle");
+                int targetPos = findDetailScrollTargetPos();
+                if (targetPos != NO_POSITION) {
+                    DebugLog.d(TAG, "detail snap to pos : " + targetPos);
+                    isAdjustingDetailSnap = true;
+                    mDetailLayoutManager.smoothScrollToPosition(mDetailRecyclerView, null, targetPos);
+                    isAdjustingAvatarSnap = true;
+                    mAvatarLayoutManager.smoothScrollToPosition(mAvatarRecyclerView, null, targetPos);
+                }
+            } else if (newState == SCROLL_STATE_DRAGGING) {
+                mDetailScrollTriggerFlag = true;
+            } else if (newState == SCROLL_STATE_SETTLING) {
             }
+            DebugLog.e(TAG, "detail state: " + newState);
         }
 
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (!mAvatarScrollTriggerFlag) {
-                mDetailScrollTriggerFlag = true;
+            if (!mAvatarScrollTriggerFlag && !isAdjustingDetailSnap && (dy != 0)) {
                 int avatarDx = cacDx(dy);
-                mAvatarRecyclerView.smoothScrollBy(avatarDx, 0);
+                mAvatarRecyclerView.scrollBy(avatarDx, 0);
+                DebugLog.d(TAG, "on detail control");
             }
-            Log.d("zcc", "detail scroll \t" + dx + "\t"
-                    + dy
-            );
+            DebugLog.d(TAG, "on detail scroll" + dx + "\t" + dy);
         }
 
         private int cacDx(int dy) {
@@ -226,7 +283,5 @@ public class ContactRecyclerViewUtil {
             delta = avatarDx - avatarDxInt;
             return avatarDxInt;
         }
-
     }
-
 }
