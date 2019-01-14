@@ -216,7 +216,7 @@ class ContactRecyclerViewUtil {
             } else if (newState == SCROLL_STATE_DRAGGING) {
                 mAvatarScrollTriggerFlag = true;
             }
-            DebugLog.e(TAG, "avatar state: " + newState);
+            DebugLog.d(TAG, "avatar state: " + newState);
         }
 
         @Override
@@ -263,7 +263,7 @@ class ContactRecyclerViewUtil {
             } else if (newState == SCROLL_STATE_DRAGGING) {
                 mDetailScrollTriggerFlag = true;
             }
-            DebugLog.e(TAG, "detail state: " + newState);
+            DebugLog.d(TAG, "detail state: " + newState);
         }
 
         @Override
