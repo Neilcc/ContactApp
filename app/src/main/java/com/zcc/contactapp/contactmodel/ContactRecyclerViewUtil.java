@@ -19,6 +19,7 @@ import static android.support.v7.widget.RecyclerView.SCROLL_STATE_DRAGGING;
 import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
 
 class ContactRecyclerViewUtil {
+
     private static final String TAG = ContactRecyclerViewUtil.class.getSimpleName();
     private static final float FLING_MS_PER_INCH = 100f;
     private Context mContext;
@@ -94,16 +95,20 @@ class ContactRecyclerViewUtil {
     }
 
     private void smoothScrollTo(int position) {
-        RecyclerView.SmoothScroller avatarScroller
-                = mAvatarFlingSnapHelper.createScroller(mAvatarLayoutManager);
-        avatarScroller.setTargetPosition(position);
-        RecyclerView.SmoothScroller detailScroller
-                = mDetailFlingSnapHelper.createScroller(mDetailLayoutManager);
-        detailScroller.setTargetPosition(position);
-        isAdjustingDetailSnap = true;
-        isAdjustingAvatarSnap = true;
-        mAvatarLayoutManager.startSmoothScroll(avatarScroller);
-        mDetailLayoutManager.startSmoothScroll(detailScroller);
+        if (position > -1 && position < mAvatarAdapter.getItemCount()) {
+            RecyclerView.SmoothScroller avatarScroller
+                    = mAvatarFlingSnapHelper.createScroller(mAvatarLayoutManager);
+            avatarScroller.setTargetPosition(position);
+            isAdjustingAvatarSnap = true;
+            mAvatarLayoutManager.startSmoothScroll(avatarScroller);
+        }
+        if (position > -1 && position < mDetailAdapter.getItemCount()) {
+            RecyclerView.SmoothScroller detailScroller
+                    = mDetailFlingSnapHelper.createScroller(mDetailLayoutManager);
+            detailScroller.setTargetPosition(position);
+            isAdjustingDetailSnap = true;
+            mDetailLayoutManager.startSmoothScroll(detailScroller);
+        }
     }
 
     private float getAvatarLayoutPaddingPx() {
@@ -182,14 +187,13 @@ class ContactRecyclerViewUtil {
         }
         float childY = child.getY();
         if (Math.abs(childY) > getDetailLayoutHeightPx() / 2) {
-            return pos1 + 1;
+            return pos1 + 1 < mDetailAdapter.getItemCount() ? pos1 + 1 : pos1;
         } else {
             return pos1;
         }
     }
 
     private class ContactAvatarRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
-
         private float delta = 0.0f;
 
         @Override

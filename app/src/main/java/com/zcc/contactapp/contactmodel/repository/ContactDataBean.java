@@ -12,21 +12,22 @@ package com.zcc.contactapp.contactmodel.repository;
  * "  },
  */
 public class ContactDataBean {
+
     private String first_name;
     private String last_name;
     private String avatar_filename;
     private String title;
     private String introduction;
 
-    public String getFirst_name() {
+    public String getFirstName() {
         return first_name;
     }
 
-    public String getLast_name() {
+    public String getLastName() {
         return last_name;
     }
 
-    public String getAvatar_filename() {
+    public String getAvatarFilename() {
         return avatar_filename;
     }
 
@@ -38,15 +39,15 @@ public class ContactDataBean {
         return introduction;
     }
 
-    public void setFirst_name(String first_name) {
+    public void setFirstName(String first_name) {
         this.first_name = first_name;
     }
 
-    public void setLast_name(String last_name) {
+    public void setLastName(String last_name) {
         this.last_name = last_name;
     }
 
-    public void setAvatar_filename(String avatar_filename) {
+    public void setAvatarFilename(String avatar_filename) {
         this.avatar_filename = avatar_filename;
     }
 

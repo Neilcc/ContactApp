@@ -3,6 +3,7 @@ package com.zcc.contactapp.contactmodel.viewmodels;
 import android.text.TextUtils;
 
 public class DetailDataBean {
+
     private String mFirstName;
     private String mLastName;
     private String mTitle;

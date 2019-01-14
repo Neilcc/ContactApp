@@ -3,6 +3,7 @@ package com.zcc.contactapp.utils;
 import com.google.gson.Gson;
 
 public class GsonUtil {
+
     private static Gson instance;
 
     public static Gson getInstance() {
@@ -15,5 +16,4 @@ public class GsonUtil {
         }
         return instance;
     }
-
 }

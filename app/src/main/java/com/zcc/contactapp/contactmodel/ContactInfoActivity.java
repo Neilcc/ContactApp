@@ -24,7 +24,6 @@ public class ContactInfoActivity extends AppCompatActivity implements IContactCo
     private RecyclerView mDetailRecyclerView;
     private AvatarLinearAdapter mAvatarAdapter;
     private DetailLinearAdapter mDetailAdapter;
-
     private ContactPresenter mContactPresenter;
     private ContactRecyclerViewUtil ContactRecyclerViewUtil;
 

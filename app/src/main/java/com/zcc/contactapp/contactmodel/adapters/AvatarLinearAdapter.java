@@ -15,6 +15,7 @@ import com.zcc.contactapp.contactmodel.viewmodels.AvatarDataBean;
 import java.util.List;
 
 public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, AvatarLinearAdapter.AvatarViewHolder> {
+
     private int mLastSelectedIndex = 0;
 
     @Override

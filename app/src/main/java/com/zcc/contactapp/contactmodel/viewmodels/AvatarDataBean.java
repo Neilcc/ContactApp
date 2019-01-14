@@ -2,6 +2,7 @@ package com.zcc.contactapp.contactmodel.viewmodels;
 
 
 public class AvatarDataBean {
+
     private String mAvatarUri;
     private boolean isSelected;
 

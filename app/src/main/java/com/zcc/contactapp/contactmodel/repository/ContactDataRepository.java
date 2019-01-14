@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDataRepository {
+
     public static final String CONTACT_FILE = "Contacts.json";
     public static final String IMAGE_FOLDER = "/images";
 
     private static final Type CONTACT_DATA_LIST_TYPE = new TypeToken<ArrayList<ContactDataBean>>() {
     }.getType();
 
-    private static List<ContactDataBean> getData() {
-        String contactInfo = loadContactData(CONTACT_FILE);
+    public static List<ContactDataBean> loadContactDataSync() {
+        String contactInfo = loadStringFromAsset(CONTACT_FILE);
         if (contactInfo.isEmpty()) {
             return new ArrayList<>();
         } else {
@@ -30,7 +31,7 @@ public class ContactDataRepository {
         }
     }
 
-    private static String loadContactData(String assetFileName) {
+    private static String loadStringFromAsset(String assetFileName) {
         try {
             InputStreamReader inputStreamReader
                     = new InputStreamReader(AssetUtil.loadAsset(assetFileName));
@@ -46,7 +47,7 @@ public class ContactDataRepository {
         return "";
     }
 
-    public void loadDataAsync(final ILoadDataListener<List<ContactDataBean>> listener) {
+    public void loadContactDataAsync(final ILoadDataListener<List<ContactDataBean>> listener) {
         AsyncTask<Void, Void, List<ContactDataBean>> loadDataTask = new LoadContactDataAsyncTask(listener);
         loadDataTask.execute();
     }
@@ -60,7 +61,7 @@ public class ContactDataRepository {
 
         @Override
         protected List<ContactDataBean> doInBackground(Void... voids) {
-            return getData();
+            return loadContactDataSync();
         }
 
         @Override

@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-
     <color name="black_overlay">#66000000</color>
-
     <color name="blue_circle">#cbdff2</color>
     <color name="black">#212121</color>
     <color name="grey">#d6d5d5</color>
     <color name="light_grey">#f6f6f6</color>
     <color name="white">#FFFFFF</color>
     <color name="divider_grey">#bababa</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">@color/black_overlay</color>
+    <color name="colorAccent">#D81B60</color>
 </resources>

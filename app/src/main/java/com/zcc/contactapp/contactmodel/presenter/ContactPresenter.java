@@ -21,17 +21,17 @@ public class ContactPresenter {
     }
 
     public void loadContactData() {
-        mDataRepository.loadDataAsync(new ILoadDataListener<List<ContactDataBean>>() {
+        mDataRepository.loadContactDataAsync(new ILoadDataListener<List<ContactDataBean>>() {
             @Override
             public void onSuccess(List<ContactDataBean> contactDataBeans) {
                 List<AvatarDataBean> avatarDataBeans = new ArrayList<>();
                 List<DetailDataBean> detailDataBeans = new ArrayList<>();
                 for (ContactDataBean contactDataBean : contactDataBeans) {
                     avatarDataBeans.add(new AvatarDataBean(UrlUtil
-                            .generateAssetUrl(contactDataBean.getAvatar_filename(),
+                            .generateAssetUrl(contactDataBean.getAvatarFilename(),
                                     ContactDataRepository.IMAGE_FOLDER)));
-                    detailDataBeans.add(new DetailDataBean(contactDataBean.getFirst_name(),
-                            contactDataBean.getLast_name(),
+                    detailDataBeans.add(new DetailDataBean(contactDataBean.getFirstName(),
+                            contactDataBean.getLastName(),
                             contactDataBean.getTitle(),
                             contactDataBean.getIntroduction()));
                 }
@@ -44,10 +44,9 @@ public class ContactPresenter {
 
             @Override
             public void onFailed(int code, String msg) {
-
+                mContactContractView.onError(code, msg);
             }
         });
-
     }
 
 }

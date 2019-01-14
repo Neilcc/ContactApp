@@ -16,8 +16,9 @@ import android.widget.Scroller;
  * Refer to LinearSnapHelper
  */
 public class FlingSnapHelper extends RecyclerView.OnFlingListener {
+
     private static final float INVALID_DISTANCE = 1f;
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
     private float milliSecondsPerInch = 30f;
     // Handles the snap on scroll case.
     private Scroller mGravityScroller;
@@ -116,22 +117,18 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
         if (!(layoutManager instanceof RecyclerView.SmoothScroller.ScrollVectorProvider)) {
             return RecyclerView.NO_POSITION;
         }
-
         final int itemCount = layoutManager.getItemCount();
         if (itemCount == 0) {
             return RecyclerView.NO_POSITION;
         }
-
         final View currentView = findSnapView(layoutManager);
         if (currentView == null) {
             return RecyclerView.NO_POSITION;
         }
-
         final int currentPosition = layoutManager.getPosition(currentView);
         if (currentPosition == RecyclerView.NO_POSITION) {
             return RecyclerView.NO_POSITION;
         }
-
         RecyclerView.SmoothScroller.ScrollVectorProvider vectorProvider =
                 (RecyclerView.SmoothScroller.ScrollVectorProvider) layoutManager;
         // deltaJumps sign comes from the velocity which may not match the order of children in
@@ -142,7 +139,6 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
             // cannot get a vector for the given position.
             return RecyclerView.NO_POSITION;
         }
-
         int vDeltaJump, hDeltaJump;
         if (layoutManager.canScrollHorizontally()) {
             hDeltaJump = estimateNextPositionDiffForFling(layoutManager,
@@ -162,12 +158,10 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
         } else {
             vDeltaJump = 0;
         }
-
         int deltaJump = layoutManager.canScrollVertically() ? vDeltaJump : hDeltaJump;
         if (deltaJump == 0) {
             return RecyclerView.NO_POSITION;
         }
-
         int targetPos = currentPosition + deltaJump;
         if (targetPos < 0) {
             targetPos = 0;
@@ -188,7 +182,6 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
         if (childCount == 0) {
             return INVALID_DISTANCE;
         }
-
         for (int i = 0; i < childCount; i++) {
             View child = layoutManager.getChildAt(i);
             final int pos = layoutManager.getPosition(child);
@@ -227,7 +220,7 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
         }
         int distance =
                 Math.abs(distances[0]) > Math.abs(distances[1]) ? distances[0] : distances[1];
-        return (int) Math.round(distance / distancePerChild);
+        return Math.round(distance / distancePerChild);
     }
 
     /**
@@ -397,7 +390,6 @@ public class FlingSnapHelper extends RecyclerView.OnFlingListener {
         if (childCount == 0) {
             return null;
         }
-
         View closestChild = null;
         final int center;
         if (layoutManager.getClipToPadding()) {

@@ -7,6 +7,7 @@ import android.view.View;
 import java.util.List;
 
 public abstract class BaseLinearAdapter<T, VH extends BaseViewHolder<T>> extends RecyclerView.Adapter<VH> {
+
     protected List<T> mDataList;
     protected ItemClickListener mItemClickListener;
 
@@ -31,7 +32,9 @@ public abstract class BaseLinearAdapter<T, VH extends BaseViewHolder<T>> extends
     }
 
     public void setDataList(List<T> dataList) {
-        if(dataList == null) return;
+        if (dataList == null) {
+            return;
+        }
         mDataList = dataList;
         notifyDataSetChanged();
     }

@@ -3,7 +3,6 @@ package com.zcc.contactapp.utils;
 import android.content.res.AssetManager;
 
 import com.zcc.contactapp.AppProfile;
-import com.zcc.contactapp.ContactApplication;
 
 import java.io.IOException;
 import java.io.InputStream;

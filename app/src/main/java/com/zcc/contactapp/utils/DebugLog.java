@@ -5,6 +5,7 @@ import android.util.Log;
 import com.zcc.contactapp.BuildConfig;
 
 public class DebugLog {
+
     private static boolean sEnabled = BuildConfig.DEBUG;
 
     public static void d(String tag, String desc) {

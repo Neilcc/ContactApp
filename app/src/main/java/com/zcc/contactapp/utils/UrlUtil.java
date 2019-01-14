@@ -9,5 +9,4 @@ public class UrlUtil {
     public static String generateAssetUrl(String fileName, String folderPath) {
         return PICASSO_PATH_PREFIX + folderPath + File.separator + fileName;
     }
-
 }
