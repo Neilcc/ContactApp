@@ -7,10 +7,26 @@
     android:orientation="vertical"
     tools:context=".contactmodel.ContactInfoActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_height"
+        android:gravity="center"
+        android:text="@string/contacts"
+        android:textColor="@color/black"
+        android:textSize="@dimen/name_font_size"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:background="@color/divider_grey" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_avatars"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_desc"

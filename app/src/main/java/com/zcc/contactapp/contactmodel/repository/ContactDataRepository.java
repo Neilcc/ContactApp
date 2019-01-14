@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDataRepository {
-    private static final String CONTACT_FILE = "Contacts.json";
+    public static final String CONTACT_FILE = "Contacts.json";
+    public static final String IMAGE_FOLDER = "/images";
 
     private static final Type CONTACT_DATA_LIST_TYPE = new TypeToken<ArrayList<ContactDataBean>>() {
     }.getType();

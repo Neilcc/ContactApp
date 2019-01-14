@@ -2,6 +2,6 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="@dimen/avatar_width" />
     <stroke
-        android:width="5dp"
+        android:width="@dimen/avatar_selected_circle_width"
         android:color="@color/blue_circle" />
 </shape>

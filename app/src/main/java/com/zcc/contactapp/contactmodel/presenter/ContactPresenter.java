@@ -19,17 +19,21 @@ public class ContactPresenter {
         mContactContractView = contactContractView;
     }
 
-    public void loadContactDatas() {
+    public void loadContactData() {
         List<ContactDataBean> contactDataBeans = mDataRepository.getData();
         List<AvatarDataBean> avatarDataBeans = new ArrayList<>();
         List<DetailDataBean> detailDataBeans = new ArrayList<>();
         for (ContactDataBean contactDataBean : contactDataBeans) {
             avatarDataBeans.add(new AvatarDataBean(UrlUtil
-                    .generateAssetUrl(contactDataBean.getAvatar_filename(), "/images")));
+                    .generateAssetUrl(contactDataBean.getAvatar_filename(),
+                            ContactDataRepository.IMAGE_FOLDER)));
             detailDataBeans.add(new DetailDataBean(contactDataBean.getFirst_name(),
                     contactDataBean.getLast_name(),
                     contactDataBean.getTitle(),
                     contactDataBean.getIntroduction()));
+        }
+        if (avatarDataBeans.size() > 0) {
+            avatarDataBeans.get(0).setSelected(true);
         }
         mContactContractView.updateContactAvatar(avatarDataBeans);
         mContactContractView.updateContactDetail(detailDataBeans);

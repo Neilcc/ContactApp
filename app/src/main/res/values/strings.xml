@@ -3,4 +3,5 @@
 
     <string name="title_activity_main">Contacts</string>
     <string name="about_me">About me</string>
+    <string name="contacts">Contacts</string>
 </resources>

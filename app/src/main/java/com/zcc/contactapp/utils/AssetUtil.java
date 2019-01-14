@@ -2,6 +2,7 @@ package com.zcc.contactapp.utils;
 
 import android.content.res.AssetManager;
 
+import com.zcc.contactapp.AppProfile;
 import com.zcc.contactapp.ContactApplication;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.io.InputStream;
 public class AssetUtil {
 
     public static InputStream loadAsset(String fileName) throws IOException {
-        AssetManager assetManager = ContactApplication.sApplicationContext.getAssets();
+        AssetManager assetManager = AppProfile.getContext().getAssets();
         return assetManager.open(fileName);
     }
 }

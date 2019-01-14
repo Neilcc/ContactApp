@@ -12,7 +12,22 @@ import com.zcc.contactapp.base.recyclerviewbase.BaseLinearAdapter;
 import com.zcc.contactapp.base.recyclerviewbase.BaseViewHolder;
 import com.zcc.contactapp.contactmodel.viewmodels.AvatarDataBean;
 
+import java.util.List;
+
 public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, AvatarLinearAdapter.AvatarViewHolder> {
+
+    private int mLastSelectedIndex = 0;
+
+    @Override
+    public void setDataList(List<AvatarDataBean> dataList) {
+        super.setDataList(dataList);
+        for (int i = 0; i < dataList.size(); i++) {
+            if (dataList.get(i).isSelected()) {
+                mLastSelectedIndex = i;
+                break;
+            }
+        }
+    }
 
     @NonNull
     @Override
@@ -20,6 +35,21 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
         View root = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.recyclerview_item_avartars, viewGroup, false);
         return new AvatarViewHolder(root);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull AvatarViewHolder avatarViewHolder, int i) {
+        super.onBindViewHolder(avatarViewHolder, i);
+    }
+
+    public void updateSelected(int index) {
+        int lastPos = mLastSelectedIndex;
+        int newPos = index;
+        mDataList.get(lastPos).setSelected(false);
+        mDataList.get(newPos).setSelected(true);
+        mLastSelectedIndex = index;
+        notifyItemChanged(lastPos);
+        notifyItemChanged(newPos);
     }
 
     public static class AvatarViewHolder extends BaseViewHolder<AvatarDataBean> {
@@ -33,7 +63,7 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
 
         @Override
         public void onBind(AvatarDataBean data) {
-            mAvatarImageView.setSelected(true);
+            mAvatarImageView.setSelected(data.isSelected());
             Picasso.get().load(data.getAvatarUri()).into(mAvatarImageView);
         }
 
