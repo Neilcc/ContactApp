@@ -37,11 +37,6 @@ public class AvatarLinearAdapter extends BaseLinearAdapter<AvatarDataBean, Avata
         return new AvatarViewHolder(root);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull AvatarViewHolder avatarViewHolder, int i) {
-        super.onBindViewHolder(avatarViewHolder, i);
-    }
-
     public void updateSelected(int index) {
         int lastPos = mLastSelectedIndex;
         mDataList.get(lastPos).setSelected(false);
